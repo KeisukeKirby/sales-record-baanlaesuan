@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>VFF Exhibition Sales Dashboard — BLS 31/07-09/08</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0F1B14;
+    --panel:#16241C;
+    --panel-2:#1C2E23;
+    --line:#2A3E31;
+    --ink:#EDF3EC;
+    --ink-dim:#9FB3A6;
+    --accent:#E8A33D;   /* trail-orange, VFF terrain vibe */
+    --accent-2:#5FA88A; /* moss green */
+    --accent-3:#C97B4A; /* clay */
+    --danger:#C4674F;
+    --mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 500px at 10% -10%, rgba(232,163,61,0.08), transparent),
+      var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+    padding:32px 20px 60px;
+  }
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  header{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    border-bottom:1px solid var(--line);
+    padding-bottom:20px;margin-bottom:28px;flex-wrap:wrap;gap:16px;
+  }
+  .eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+    color:var(--accent);text-transform:uppercase;margin-bottom:6px;
+  }
+  h1{margin:0;font-size:26px;font-weight:700;letter-spacing:-0.01em;}
+  .period{font-family:var(--mono);color:var(--ink-dim);font-size:13px;text-align:right;}
+  .period b{color:var(--ink);}
+
+  .kpi-row{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px;
+  }
+  .kpi{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:18px 20px;position:relative;overflow:hidden;
+  }
+  .kpi::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);
+  }
+  .kpi.g::before{background:var(--accent-2);}
+  .kpi.c::before{background:var(--accent-3);}
+  .kpi-label{font-size:12px;color:var(--ink-dim);margin-bottom:8px;}
+  .kpi-value{font-size:26px;font-weight:700;font-family:var(--mono);letter-spacing:-0.02em;}
+  .kpi-sub{font-size:11px;color:var(--ink-dim);margin-top:4px;}
+
+  section{margin-bottom:26px;}
+  .section-title{
+    font-size:13px;font-weight:700;color:var(--ink);
+    display:flex;align-items:center;gap:8px;margin-bottom:14px;
+  }
+  .section-title .n{
+    font-family:var(--mono);color:var(--accent);font-size:12px;
+  }
+
+  .grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;}
+  .panel{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;
+  }
+  .panel h3{margin:0 0 14px 0;font-size:14px;font-weight:600;color:var(--ink);}
+  .chart-box{position:relative;height:280px;}
+  .chart-box.tall{height:340px;}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{
+    text-align:left;color:var(--ink-dim);font-weight:600;font-size:11px;
+    text-transform:uppercase;letter-spacing:.05em;
+    border-bottom:1px solid var(--line);padding:8px 6px;
+  }
+  td{padding:9px 6px;border-bottom:1px solid rgba(255,255,255,0.04);}
+  td.num{font-family:var(--mono);text-align:right;}
+  tr:last-child td{border-bottom:none;}
+  .rank{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:20px;height:20px;border-radius:5px;font-size:11px;font-family:var(--mono);
+    background:var(--panel-2);color:var(--ink-dim);margin-right:8px;
+  }
+  .top .rank{background:rgba(232,163,61,0.18);color:var(--accent);}
+  .bottom .rank{background:rgba(196,103,79,0.18);color:var(--danger);}
+
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+  .bar-list{display:flex;flex-direction:column;gap:10px;}
+  .bar-row{display:grid;grid-template-columns:90px 1fr 70px;align-items:center;gap:10px;font-size:12px;}
+  .bar-track{height:10px;background:var(--panel-2);border-radius:5px;overflow:hidden;}
+  .bar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent-2),var(--accent));}
+  .bar-val{font-family:var(--mono);text-align:right;color:var(--ink-dim);}
+
+  footer{
+    margin-top:30px;padding-top:16px;border-top:1px solid var(--line);
+    font-size:11px;color:var(--ink-dim);font-family:var(--mono);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  }
+
+  @media (max-width:820px){
+    .kpi-row{grid-template-columns:repeat(2,1fr);}
+    .grid2{grid-template-columns:1fr;}
+    .twocol{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="eyebrow">Exhibition Performance Report</div>
+      <h1>VFF ブース 実績ダッシュボード</h1>
+    </div>
+    <div class="period">会期 <b>2026/07/31 – 08/09</b>（10日間）<br>集計対象：VFF / BFJ / Coolcore / Marugo / Oleno / AQOZ / Others</div>
+  </header>
+
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">総販売額</div>
+      <div class="kpi-value" id="kpiNet">-</div>
+      <div class="kpi-sub">THB</div>
+    </div>
+    <div class="kpi g">
+      <div class="kpi-label">総販売数量</div>
+      <div class="kpi-value" id="kpiQty">-</div>
+      <div class="kpi-sub">点</div>
+    </div>
+    <div class="kpi c">
+      <div class="kpi-label">客数（伝票数）</div>
+      <div class="kpi-value" id="kpiReceipts">-</div>
+      <div class="kpi-sub">件</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">客単価</div>
+      <div class="kpi-value" id="kpiAvg">-</div>
+      <div class="kpi-sub">THB / 件</div>
+    </div>
+  </div>
+
+  <section>
+    <div class="section-title"><span class="n">01</span> 日別 販売額・数量</div>
+    <div class="panel">
+      <div class="chart-box tall"><canvas id="dailyChart"></canvas></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title"><span class="n">02</span> モデル別ランキング（サイズ・カラー合算）</div>
+    <div class="grid2">
+      <div class="panel">
+        <h3>売上トップ5</h3>
+        <table class="top">
+          <tr><th>モデル</th><th style="text-align:right">数量</th><th style="text-align:right">金額(THB)</th></tr>
+          <tbody id="top5body"></tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h3>売上ワースト5</h3>
+        <table class="bottom">
+          <tr><th>モデル</th><th style="text-align:right">数量</th><th style="text-align:right">金額(THB)</th></tr>
+          <tbody id="bottom5body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title"><span class="n">03</span> ブランド別 売上構成</div>
+    <div class="grid2">
+      <div class="panel">
+        <h3>ブランド別 金額シェア</h3>
+        <div class="chart-box"><canvas id="brandChart"></canvas></div>
+      </div>
+      <div class="panel">
+        <h3>ブランド別 内訳</h3>
+        <table>
+          <tr><th>ブランド</th><th style="text-align:right">数量</th><th style="text-align:right">金額</th><th style="text-align:right">比率</th></tr>
+          <tbody id="brandBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Source: Sales_VFF_BLS_31_07-09_08_2026.xlsx</span>
+    <span id="genNote"></span>
+  </footer>
+</div>
+
+<script>
+const DATA = {
+  "total_qty": 632,
+  "total_net": 1301448,
+  "num_receipts": 388,
+  "avg_net_per_receipt": 3354.2,
+  "num_models": 57,
+  "daily": [
+    {
+      "date": "2026-07-31",
+      "qty": 58,
+      "net": 147463,
+      "receipts": 37
+    },
+    {
+      "date": "2026-08-01",
+      "qty": 99,
+      "net": 225498,
+      "receipts": 60
+    },
+    {
+      "date": "2026-08-02",
+      "qty": 104,
+      "net": 189168,
+      "receipts": 64
+    },
+    {
+      "date": "2026-08-03",
+      "qty": 46,
+      "net": 77189,
+      "receipts": 24
+    },
+    {
+      "date": "2026-08-04",
+      "qty": 55,
+      "net": 91027,
+      "receipts": 30
+    },
+    {
+      "date": "2026-08-05",
+      "qty": 25,
+      "net": 85484,
+      "receipts": 20
+    },
+    {
+      "date": "2026-08-06",
+      "qty": 41,
+      "net": 98694,
+      "receipts": 35
+    },
+    {
+      "date": "2026-08-07",
+      "qty": 54,
+      "net": 100681,
+      "receipts": 30
+    },
+    {
+      "date": "2026-08-08",
+      "qty": 84,
+      "net": 173969,
+      "receipts": 47
+    },
+    {
+      "date": "2026-08-09",
+      "qty": 66,
+      "net": 112275,
+      "receipts": 41
+    }
+  ],
+  "top5": [
+    {
+      "model": "VFF V-Soul",
+      "qty": 75,
+      "net": 335154
+    },
+    {
+      "model": "VFF V-Run",
+      "qty": 43,
+      "net": 231426
+    },
+    {
+      "model": "VFF KSO EVO",
+      "qty": 29,
+      "net": 121680
+    },
+    {
+      "model": "Marugo TabiRela",
+      "qty": 43,
+      "net": 68816
+    },
+    {
+      "model": "VFF Breezandal",
+      "qty": 12,
+      "net": 64584
+    }
+  ],
+  "bottom5": [
+    {
+      "model": "Kid's Half Pants",
+      "qty": 1,
+      "net": 156
+    },
+    {
+      "model": "Blanket",
+      "qty": 1,
+      "net": 236
+    },
+    {
+      "model": "Headband Studio",
+      "qty": 1,
+      "net": 336
+    },
+    {
+      "model": "Mesh Cloth",
+      "qty": 2,
+      "net": 592
+    },
+    {
+      "model": "Oleno Calf Supporter Bicolor",
+      "qty": 1,
+      "net": 720
+    }
+  ],
+  "brand": [
+    {
+      "brand": "VFF",
+      "qty": 252,
+      "net": 1025187,
+      "share": 78.8
+    },
+    {
+      "brand": "Coolcore",
+      "qty": 175,
+      "net": 86915,
+      "share": 6.7
+    },
+    {
+      "brand": "Marugo",
+      "qty": 47,
+      "net": 77136,
+      "share": 5.9
+    },
+    {
+      "brand": "Oleno",
+      "qty": 84,
+      "net": 68778,
+      "share": 5.3
+    },
+    {
+      "brand": "AQOZ",
+      "qty": 12,
+      "net": 19248,
+      "share": 1.5
+    },
+    {
+      "brand": "BFJ",
+      "qty": 37,
+      "net": 16650,
+      "share": 1.3
+    },
+    {
+      "brand": "Others",
+      "qty": 25,
+      "net": 7534,
+      "share": 0.6
+    }
+  ]
+};
+
+const fmt = n => n.toLocaleString('en-US');
+
+document.getElementById('kpiNet').textContent = fmt(DATA.total_net);
+document.getElementById('kpiQty').textContent = fmt(DATA.total_qty);
+document.getElementById('kpiReceipts').textContent = fmt(DATA.num_receipts);
+document.getElementById('kpiAvg').textContent = fmt(Math.round(DATA.avg_net_per_receipt));
+
+Chart.defaults.color = '#9FB3A6';
+Chart.defaults.font.family = "-apple-system, 'Hiragino Kaku Gothic ProN', sans-serif";
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+
+// Daily chart
+const dailyLabels = DATA.daily.map(d=>{
+  const dt = new Date(d.date+'T00:00:00');
+  return (dt.getMonth()+1)+'/'+dt.getDate();
+});
+new Chart(document.getElementById('dailyChart'), {
+  data: {
+    labels: dailyLabels,
+    datasets: [
+      {
+        type:'bar',
+        label:'販売額 (THB)',
+        data: DATA.daily.map(d=>d.net),
+        backgroundColor:'rgba(232,163,61,0.75)',
+        borderRadius:4,
+        yAxisID:'y',
+        order:2
+      },
+      {
+        type:'line',
+        label:'数量 (点)',
+        data: DATA.daily.map(d=>d.qty),
+        borderColor:'#5FA88A',
+        backgroundColor:'#5FA88A',
+        tension:0.35,
+        pointRadius:4,
+        pointBackgroundColor:'#5FA88A',
+        yAxisID:'y1',
+        order:1
+      }
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    interaction:{mode:'index', intersect:false},
+    plugins:{ legend:{labels:{boxWidth:12, usePointStyle:true}} },
+    scales:{
+      y:{ position:'left', grid:{color:'rgba(255,255,255,0.06)'}, ticks:{ callback:v=>fmt(v) } },
+      y1:{ position:'right', grid:{display:false}, ticks:{ stepSize:20 } }
+    }
+  }
+});
+
+// Top5 / Bottom5 tables
+function fillTable(id, rows, rankClass){
+  const body = document.getElementById(id);
+  body.innerHTML = rows.map((r,i)=>`
+    <tr>
+      <td><span class="rank">${i+1}</span>${r.model}</td>
+      <td class="num">${fmt(r.qty)}</td>
+      <td class="num">${fmt(r.net)}</td>
+    </tr>`).join('');
+}
+fillTable('top5body', DATA.top5);
+fillTable('bottom5body', DATA.bottom5);
+
+// Brand chart
+const brandColors = ['#E8A33D','#5FA88A','#C97B4A','#7FA0C4','#B189C7','#D9C15A','#8E9C8F'];
+new Chart(document.getElementById('brandChart'), {
+  type:'doughnut',
+  data:{
+    labels: DATA.brand.map(b=>b.brand),
+    datasets:[{
+      data: DATA.brand.map(b=>b.net),
+      backgroundColor: brandColors,
+      borderColor:'#16241C',
+      borderWidth:2
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{ position:'right', labels:{ boxWidth:10, usePointStyle:true, font:{size:11} } },
+      tooltip:{ callbacks:{ label: ctx => `${ctx.label}: ${fmt(ctx.raw)} THB` } }
+    }
+  }
+});
+
+document.getElementById('brandBody').innerHTML = DATA.brand.map(b=>`
+  <tr>
+    <td>${b.brand}</td>
+    <td class="num">${fmt(b.qty)}</td>
+    <td class="num">${fmt(b.net)}</td>
+    <td class="num">${b.share}%</td>
+  </tr>`).join('');
+
+document.getElementById('genNote').textContent = 'Models: ' + DATA.num_models + ' / Generated ' + new Date().toISOString().slice(0,10);
+</script>
+</body>
+</html>
