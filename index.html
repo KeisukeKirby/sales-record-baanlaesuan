@@ -166,17 +166,17 @@
     <div class="section-title"><span class="n">02</span> モデル別ランキング（サイズ・カラー合算）</div>
     <div class="grid2">
       <div class="panel">
-        <h3>売上トップ5</h3>
+        <h3>売上トップ10</h3>
         <table class="top">
           <tr><th>モデル</th><th style="text-align:right">数量</th><th style="text-align:right">金額(THB)</th></tr>
-          <tbody id="top5body"></tbody>
+          <tbody id="top10body"></tbody>
         </table>
       </div>
       <div class="panel">
-        <h3>売上ワースト5</h3>
+        <h3>売上ワースト10</h3>
         <table class="bottom">
           <tr><th>モデル</th><th style="text-align:right">数量</th><th style="text-align:right">金額(THB)</th></tr>
-          <tbody id="bottom5body"></tbody>
+          <tbody id="bottom10body"></tbody>
         </table>
       </div>
     </div>
@@ -243,19 +243,29 @@ const DATA = {
     {"date": "2026-08-08","qty": 84,"net": 173969,"receipts": 47},
     {"date": "2026-08-09","qty": 66,"net": 112275,"receipts": 41}
   ],
-  "top5": [
+  "top10": [
     {"model": "VFF V-Soul","qty": 75,"net": 335154},
     {"model": "VFF V-Run","qty": 43,"net": 231426},
     {"model": "VFF KSO EVO","qty": 29,"net": 121680},
     {"model": "Marugo TabiRela","qty": 43,"net": 68816},
-    {"model": "VFF Breezandal","qty": 12,"net": 64584}
+    {"model": "VFF Breezandal","qty": 12,"net": 64584},
+    {"model": "VFF Scramkey","qty": 13,"net": 49920},
+    {"model": "CP Arm Sleeves","qty": 70,"net": 43160},
+    {"model": "VFF Graspifier","qty": 8,"net": 34300},
+    {"model": "VFF Trailope","qty": 5,"net": 27280},
+    {"model": "VFF V-Train 2.0","qty": 7,"net": 26040}
   ],
-  "bottom5": [
+  "bottom10": [
     {"model": "Kid's Half Pants","qty": 1,"net": 156},
     {"model": "Blanket","qty": 1,"net": 236},
     {"model": "Headband Studio","qty": 1,"net": 336},
     {"model": "Mesh Cloth","qty": 2,"net": 592},
-    {"model": "Oleno Calf Supporter Bicolor","qty": 1,"net": 720}
+    {"model": "Oleno Calf Supporter Pixel Map","qty": 1,"net": 720},
+    {"model": "Oleno Calf Supporter Bicolor","qty": 1,"net": 720},
+    {"model": "Knockaround PMSK3352","qty": 1,"net": 1035},
+    {"model": "Knockaround FSRM3325","qty": 1,"net": 1035},
+    {"model": "Pet Cool Tank","qty": 5,"net": 1380},
+    {"model": "Socks","qty": 10,"net": 1380}
   ],
   "brand": [
     {"brand": "VFF","qty": 252,"net": 1025187,"share": 78.8},
@@ -290,8 +300,8 @@ function fillTable(id, rows){
       <td class="num">${fmt(r.net)}</td>
     </tr>`).join('');
 }
-fillTable('top5body', DATA.top5);
-fillTable('bottom5body', DATA.bottom5);
+fillTable('top10body', DATA.top10);
+fillTable('bottom10body', DATA.bottom10);
 document.getElementById('brandBody').innerHTML = DATA.brand.map(b=>`
   <tr>
     <td>${b.brand}</td>
