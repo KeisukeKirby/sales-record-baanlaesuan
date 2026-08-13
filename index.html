@@ -65,6 +65,15 @@
   .kpi-label{font-size:13px;color:var(--ink-dim);margin-bottom:8px;}
   .kpi-value{font-size:28px;font-weight:700;font-family:var(--mono);letter-spacing:-0.01em;}
   .kpi-sub{font-size:12px;color:var(--ink-dim);margin-top:4px;}
+  .kpi-yoy{
+    position:absolute;right:18px;bottom:16px;
+    font-family:var(--mono);font-size:12.5px;font-weight:600;
+    display:flex;align-items:baseline;gap:3px;white-space:nowrap;
+  }
+  .kpi-yoy .yoy-cap{color:var(--ink-dim);font-size:10px;font-weight:400;margin-right:1px;}
+  .kpi-yoy.up{color:var(--accent-2);}
+  .kpi-yoy.down{color:var(--danger);}
+  .kpi-yoy.flat{color:var(--ink-dim);}
   section{margin-bottom:26px;}
   .section-title{
     font-size:15px;font-weight:700;color:var(--ink);
@@ -80,6 +89,7 @@
   .panel h3{margin:0 0 14px 0;font-size:15px;font-weight:600;color:var(--ink);}
   .chart-box{position:relative;height:280px;}
   .chart-box.tall{height:340px;}
+  .chart-note{font-size:12px;color:var(--ink-dim);font-family:var(--sans);margin-top:12px;text-align:center;line-height:1.5;}
   table{width:100%;border-collapse:collapse;font-size:14px;}
   th{
     text-align:left;color:var(--ink-dim);font-weight:600;font-size:12px;
@@ -139,27 +149,32 @@
       <div class="kpi-label">総販売額</div>
       <div class="kpi-value" id="kpiNet">-</div>
       <div class="kpi-sub">THB</div>
+      <div class="kpi-yoy" id="yoyNet"></div>
     </div>
     <div class="kpi g">
       <div class="kpi-label">総販売数量</div>
       <div class="kpi-value" id="kpiQty">-</div>
       <div class="kpi-sub">点</div>
+      <div class="kpi-yoy" id="yoyQty"></div>
     </div>
     <div class="kpi c">
       <div class="kpi-label">客数（伝票数）</div>
       <div class="kpi-value" id="kpiReceipts">-</div>
       <div class="kpi-sub">件</div>
+      <div class="kpi-yoy" id="yoyReceipts"></div>
     </div>
     <div class="kpi">
       <div class="kpi-label">客単価</div>
       <div class="kpi-value" id="kpiAvg">-</div>
       <div class="kpi-sub">THB / 件</div>
+      <div class="kpi-yoy" id="yoyAvg"></div>
     </div>
   </div>
   <section>
     <div class="section-title"><span class="n">01</span> 日別 販売額・数量</div>
     <div class="panel">
       <div class="chart-box tall"><canvas id="dailyChart"></canvas></div>
+      <div class="chart-note">濃色＝2026 ／ 淡色・破線＝2025（会期初日を揃えて日次比較：2026 7/31 ⇔ 2025 8/1）</div>
     </div>
   </section>
   <section>
@@ -231,6 +246,25 @@ const DATA = {
   "num_receipts": 388,
   "avg_net_per_receipt": 3354.2,
   "num_models": 57,
+  "lastYear": {
+    "period": "2025-08-01 – 2025-08-10",
+    "total_qty": 520,
+    "total_net": 1078328,
+    "num_receipts": 343,
+    "avg_net_per_receipt": 3143.8,
+    "daily": [
+      {"date": "2025-08-01","qty": 50,"net": 117484},
+      {"date": "2025-08-02","qty": 97,"net": 175863},
+      {"date": "2025-08-03","qty": 74,"net": 150884},
+      {"date": "2025-08-04","qty": 37,"net": 75105},
+      {"date": "2025-08-05","qty": 43,"net": 109683},
+      {"date": "2025-08-06","qty": 31,"net": 72174},
+      {"date": "2025-08-07","qty": 34,"net": 63828},
+      {"date": "2025-08-08","qty": 24,"net": 40764},
+      {"date": "2025-08-09","qty": 50,"net": 122256},
+      {"date": "2025-08-10","qty": 80,"net": 150287}
+    ]
+  },
   "daily": [
     {"date": "2026-07-31","qty": 58,"net": 147463,"receipts": 37},
     {"date": "2026-08-01","qty": 99,"net": 225498,"receipts": 60},
@@ -291,6 +325,22 @@ document.getElementById('kpiNet').textContent = fmt(DATA.total_net);
 document.getElementById('kpiQty').textContent = fmt(DATA.total_qty);
 document.getElementById('kpiReceipts').textContent = fmt(DATA.num_receipts);
 document.getElementById('kpiAvg').textContent = fmt(Math.round(DATA.avg_net_per_receipt));
+// --- Year-over-year vs 2025 (shown bottom-right of each KPI) ---
+function setYoY(id, cur, prev){
+  const el = document.getElementById(id);
+  if (!el || !prev){ if(el) el.textContent=''; return; }
+  const pct = (cur - prev) / prev * 100;
+  const cls = pct > 0.05 ? 'up' : (pct < -0.05 ? 'down' : 'flat');
+  const arrow = pct > 0.05 ? '▲' : (pct < -0.05 ? '▼' : '±');
+  el.className = 'kpi-yoy ' + cls;
+  el.innerHTML = `<span class="yoy-cap">前年比</span>${arrow}${Math.abs(pct).toFixed(1)}%`;
+  el.title = `2025: ${fmt(Math.round(prev))}`;
+}
+const LY = DATA.lastYear;
+setYoY('yoyNet', DATA.total_net, LY.total_net);
+setYoY('yoyQty', DATA.total_qty, LY.total_qty);
+setYoY('yoyReceipts', DATA.num_receipts, LY.num_receipts);
+setYoY('yoyAvg', DATA.avg_net_per_receipt, LY.avg_net_per_receipt);
 function fillTable(id, rows){
   const body = document.getElementById(id);
   body.innerHTML = rows.map((r,i)=>`
@@ -340,22 +390,30 @@ Chart.defaults.color = '#AFC4B6';
 Chart.defaults.font.family = "'Noto Sans JP', -apple-system, 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif";
 Chart.defaults.font.size = 13;
 Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.devicePixelRatio = Math.max(2, window.devicePixelRatio || 1);
 const dailyLabels = DATA.daily.map(d=>{
   const dt = new Date(d.date+'T00:00:00');
   return (dt.getMonth()+1)+'/'+dt.getDate();
 });
+const lyDaily = DATA.lastYear.daily;
+const lyDates = lyDaily.map(d=>{ const dt=new Date(d.date+'T00:00:00'); return (dt.getMonth()+1)+'/'+dt.getDate(); });
 new Chart(document.getElementById('dailyChart'), {
   data: {
     labels: dailyLabels,
     datasets: [
-      {type:'bar',label:'販売額 (THB)',data: DATA.daily.map(d=>d.net),backgroundColor:'rgba(232,163,61,0.75)',borderRadius:4,yAxisID:'y',order:2},
-      {type:'line',label:'数量 (点)',data: DATA.daily.map(d=>d.qty),borderColor:'#5FA88A',backgroundColor:'#5FA88A',tension:0.35,pointRadius:4,pointBackgroundColor:'#5FA88A',yAxisID:'y1',order:1}
+      {type:'bar',label:'販売額 2026 (THB)',data: DATA.daily.map(d=>d.net),backgroundColor:'rgba(232,163,61,0.82)',borderRadius:4,yAxisID:'y',order:4},
+      {type:'bar',label:'販売額 2025 (THB)',data: lyDaily.map(d=>d.net),backgroundColor:'rgba(232,163,61,0.22)',borderRadius:4,yAxisID:'y',order:5},
+      {type:'line',label:'数量 2026 (点)',data: DATA.daily.map(d=>d.qty),borderColor:'#5FA88A',backgroundColor:'#5FA88A',tension:0.35,pointRadius:4,pointBackgroundColor:'#5FA88A',yAxisID:'y1',order:1},
+      {type:'line',label:'数量 2025 (点)',data: lyDaily.map(d=>d.qty),borderColor:'rgba(95,168,138,0.5)',backgroundColor:'rgba(95,168,138,0.5)',borderDash:[5,4],borderWidth:2,tension:0.35,pointRadius:2,pointBackgroundColor:'rgba(95,168,138,0.5)',yAxisID:'y1',order:2}
     ]
   },
   options: {
     responsive:true, maintainAspectRatio:false,
     interaction:{mode:'index', intersect:false},
-    plugins:{ legend:{labels:{boxWidth:12, usePointStyle:true}} },
+    plugins:{
+      legend:{labels:{boxWidth:12, usePointStyle:true, padding:14}},
+      tooltip:{ callbacks:{ title: items => items.length ? `2026 ${dailyLabels[items[0].dataIndex]}  ／  2025 ${lyDates[items[0].dataIndex]}` : '' } }
+    },
     scales:{
       y:{ position:'left', grid:{color:'rgba(255,255,255,0.06)'}, ticks:{ callback:v=>fmt(v) } },
       y1:{ position:'right', grid:{display:false}, ticks:{ stepSize:20 } }
@@ -372,7 +430,7 @@ new Chart(document.getElementById('brandChart'), {
   options:{
     responsive:true, maintainAspectRatio:false,
     plugins:{
-      legend:{ position:'right', labels:{ boxWidth:10, usePointStyle:true, font:{size:11} } },
+      legend:{ position:'right', labels:{ boxWidth:10, usePointStyle:true, font:{size:12} } },
       tooltip:{ callbacks:{ label: ctx => `${ctx.label}: ${fmt(ctx.raw)} THB` } }
     }
   }
