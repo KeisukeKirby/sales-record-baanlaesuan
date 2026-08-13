@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <title>VFF Exhibition Sales Dashboard — BLS 31/07-09/08</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0F1B14;
@@ -11,12 +14,13 @@
     --panel-2:#1C2E23;
     --line:#2A3E31;
     --ink:#EDF3EC;
-    --ink-dim:#9FB3A6;
+    --ink-dim:#AFC4B6;
     --accent:#E8A33D;
     --accent-2:#5FA88A;
     --accent-3:#C97B4A;
     --danger:#C4674F;
-    --mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+    --sans: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
+    --mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Roboto Mono", monospace;
   }
   *{box-sizing:border-box;}
   body{
@@ -25,7 +29,12 @@
       radial-gradient(1200px 500px at 10% -10%, rgba(232,163,61,0.08), transparent),
       var(--bg);
     color:var(--ink);
-    font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+    font-family:var(--sans);
+    font-size:15px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    text-rendering:optimizeLegibility;
     padding:32px 20px 60px;
   }
   .wrap{max-width:1180px;margin:0 auto;}
@@ -35,11 +44,11 @@
     padding-bottom:20px;margin-bottom:28px;flex-wrap:wrap;gap:16px;
   }
   .eyebrow{
-    font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+    font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.12em;
     color:var(--accent);text-transform:uppercase;margin-bottom:6px;
   }
-  h1{margin:0;font-size:26px;font-weight:700;letter-spacing:-0.01em;}
-  .period{font-family:var(--mono);color:var(--ink-dim);font-size:13px;text-align:right;}
+  h1{margin:0;font-size:28px;font-weight:700;letter-spacing:0;}
+  .period{font-family:var(--mono);color:var(--ink-dim);font-size:13px;line-height:1.7;text-align:right;}
   .period b{color:var(--ink);}
   .kpi-row{
     display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px;
@@ -53,49 +62,49 @@
   }
   .kpi.g::before{background:var(--accent-2);}
   .kpi.c::before{background:var(--accent-3);}
-  .kpi-label{font-size:12px;color:var(--ink-dim);margin-bottom:8px;}
-  .kpi-value{font-size:26px;font-weight:700;font-family:var(--mono);letter-spacing:-0.02em;}
-  .kpi-sub{font-size:11px;color:var(--ink-dim);margin-top:4px;}
+  .kpi-label{font-size:13px;color:var(--ink-dim);margin-bottom:8px;}
+  .kpi-value{font-size:28px;font-weight:700;font-family:var(--mono);letter-spacing:-0.01em;}
+  .kpi-sub{font-size:12px;color:var(--ink-dim);margin-top:4px;}
   section{margin-bottom:26px;}
   .section-title{
-    font-size:13px;font-weight:700;color:var(--ink);
+    font-size:15px;font-weight:700;color:var(--ink);
     display:flex;align-items:center;gap:8px;margin-bottom:14px;
   }
   .section-title .n{
-    font-family:var(--mono);color:var(--accent);font-size:12px;
+    font-family:var(--mono);color:var(--accent);font-size:13px;font-weight:600;
   }
   .grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;}
   .panel{
     background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;
   }
-  .panel h3{margin:0 0 14px 0;font-size:14px;font-weight:600;color:var(--ink);}
+  .panel h3{margin:0 0 14px 0;font-size:15px;font-weight:600;color:var(--ink);}
   .chart-box{position:relative;height:280px;}
   .chart-box.tall{height:340px;}
-  table{width:100%;border-collapse:collapse;font-size:13px;}
+  table{width:100%;border-collapse:collapse;font-size:14px;}
   th{
-    text-align:left;color:var(--ink-dim);font-weight:600;font-size:11px;
+    text-align:left;color:var(--ink-dim);font-weight:600;font-size:12px;
     text-transform:uppercase;letter-spacing:.05em;
-    border-bottom:1px solid var(--line);padding:8px 6px;
+    border-bottom:1px solid var(--line);padding:9px 6px;
   }
   td{padding:9px 6px;border-bottom:1px solid rgba(255,255,255,0.04);}
   td.num{font-family:var(--mono);text-align:right;}
   tr:last-child td{border-bottom:none;}
   .rank{
     display:inline-flex;align-items:center;justify-content:center;
-    width:20px;height:20px;border-radius:5px;font-size:11px;font-family:var(--mono);
+    width:22px;height:22px;border-radius:5px;font-size:12px;font-family:var(--mono);
     background:var(--panel-2);color:var(--ink-dim);margin-right:8px;
   }
   .top .rank{background:rgba(232,163,61,0.18);color:var(--accent);}
   .bottom .rank{background:rgba(196,103,79,0.18);color:var(--danger);}
   .twocol{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   .bar-list{display:flex;flex-direction:column;gap:10px;}
-  .bar-row{display:grid;grid-template-columns:90px 1fr 70px;align-items:center;gap:10px;font-size:12px;}
+  .bar-row{display:grid;grid-template-columns:90px 1fr 70px;align-items:center;gap:10px;font-size:13px;}
   .bar-track{height:10px;background:var(--panel-2);border-radius:5px;overflow:hidden;}
   .bar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent-2),var(--accent));}
   .bar-val{font-family:var(--mono);text-align:right;color:var(--ink-dim);}
   footer{
     margin-top:30px;padding-top:16px;border-top:1px solid var(--line);
-    font-size:11px;color:var(--ink-dim);font-family:var(--mono);
+    font-size:12px;color:var(--ink-dim);font-family:var(--mono);
     display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
   }
   @media (max-width:820px){
@@ -252,8 +261,9 @@ document.getElementById('genNote').textContent = 'Models: ' + DATA.num_models + 
 if (typeof Chart === 'undefined') {
   console.error('Chart.js failed to load from CDN');
 } else {
-Chart.defaults.color = '#9FB3A6';
-Chart.defaults.font.family = "-apple-system, 'Hiragino Kaku Gothic ProN', sans-serif";
+Chart.defaults.color = '#AFC4B6';
+Chart.defaults.font.family = "'Noto Sans JP', -apple-system, 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif";
+Chart.defaults.font.size = 13;
 Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
 const dailyLabels = DATA.daily.map(d=>{
   const dt = new Date(d.date+'T00:00:00');
