@@ -106,6 +106,9 @@
   }
   .top .rank{background:rgba(232,163,61,0.18);color:var(--accent);}
   .bottom .rank{background:rgba(196,103,79,0.18);color:var(--danger);}
+  .insight-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px;}
+  .insight-list li{position:relative;padding-left:20px;font-size:14px;line-height:1.8;color:var(--ink);}
+  .insight-list li::before{content:"";position:absolute;left:2px;top:9px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
   .twocol{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   .bar-list{display:flex;flex-direction:column;gap:10px;}
   .bar-row{display:grid;grid-template-columns:90px 1fr 70px;align-items:center;gap:10px;font-size:13px;}
@@ -212,7 +215,19 @@
     </div>
   </section>
   <section>
-    <div class="section-title"><span class="n">04</span> ブランド別 売上詳細</div>
+    <div class="section-title"><span class="n">04</span> 所感</div>
+    <div class="panel">
+      <ul class="insight-list">
+        <li>ブース来場者・購入者ともに、30代後半以上が大半を占めた。商品への関心は性別で明確に分かれ、女性はV-SOUL、男性はV-RUNへの反応が最も強かった。VFFの使用経験がある方は、ランニングやトレーニングを習慣にしている男性に多く見られた。</li>
+        <li>当社ブースは、会期中最も人の出入りが多かったアウトドア用品エリアからやや離れており、会場全体の人の流れを十分に取り込めていなかった。</li>
+        <li>２週目に比べ１週目のブース来場者は広告の影響もあってか、試着・購入目的の来場者が多かった印象。</li>
+        <li>売上合計は前年を上回った一方、来場者の出入りは時間帯による波が大きかった。最終日は夕方の時点で、すでに人の流れがまばらになっていた。</li>
+        <li>Coolcore製品は特に40-50代男性からの関心が高かった。</li>
+      </ul>
+    </div>
+  </section>
+  <section>
+    <div class="section-title"><span class="n">05</span> ブランド別 売上詳細</div>
     <div class="panel">
       <div class="detail-head">
         <label for="brandSelect">ブランドを選択</label>
