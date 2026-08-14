@@ -174,7 +174,6 @@
     <div class="section-title"><span class="n">01</span> 日別 販売額・数量</div>
     <div class="panel">
       <div class="chart-box tall"><canvas id="dailyChart"></canvas></div>
-      <div class="chart-note">販売額＝青(2026)を淡色(2025)に重ね表示 ／ 数量＝実線(2026)・破線(2025)。会期初日を揃えて比較（2026 7/31 ⇔ 2025 8/1）。棒にカーソルを合わせると各日の客単価も表示。</div>
     </div>
   </section>
   <section>
@@ -402,10 +401,10 @@ new Chart(document.getElementById('dailyChart'), {
   data: {
     labels: dailyLabels,
     datasets: [
-      {type:'bar',label:'販売額 2026 (THB)',data: DATA.daily.map(d=>d.net),backgroundColor:'#4F9DE0',borderRadius:4,grouped:false,categoryPercentage:0.9,barPercentage:0.5,yAxisID:'y',order:4},
-      {type:'bar',label:'販売額 2025 (THB)',data: lyDaily.map(d=>d.net),backgroundColor:'rgba(79,157,224,0.28)',borderRadius:4,grouped:false,categoryPercentage:0.9,barPercentage:0.9,yAxisID:'y',order:5},
-      {type:'line',label:'数量 2026 (点)',data: DATA.daily.map(d=>d.qty),borderColor:'#5FA88A',backgroundColor:'#5FA88A',tension:0.35,pointRadius:4,pointBackgroundColor:'#5FA88A',yAxisID:'y1',order:1},
-      {type:'line',label:'数量 2025 (点)',data: lyDaily.map(d=>d.qty),borderColor:'rgba(95,168,138,0.5)',backgroundColor:'rgba(95,168,138,0.5)',borderDash:[5,4],borderWidth:2,tension:0.35,pointRadius:2,pointBackgroundColor:'rgba(95,168,138,0.5)',yAxisID:'y1',order:2}
+      {type:'bar',label:'販売額 2026 (THB)',data: DATA.daily.map(d=>d.net),backgroundColor:'#3E8FDB',borderRadius:4,categoryPercentage:0.7,barPercentage:0.9,yAxisID:'y',order:4},
+      {type:'bar',label:'販売額 2025 (THB)',data: lyDaily.map(d=>d.net),backgroundColor:'#A9CFF2',borderRadius:4,categoryPercentage:0.7,barPercentage:0.9,yAxisID:'y',order:5},
+      {type:'line',label:'数量 2026 (点)',data: DATA.daily.map(d=>d.qty),borderColor:'#2E9C74',backgroundColor:'#2E9C74',tension:0.35,pointRadius:4,pointBackgroundColor:'#2E9C74',yAxisID:'y1',order:1},
+      {type:'line',label:'数量 2025 (点)',data: lyDaily.map(d=>d.qty),borderColor:'#96D9BB',backgroundColor:'#96D9BB',borderDash:[5,4],borderWidth:2,tension:0.35,pointRadius:3,pointBackgroundColor:'#96D9BB',yAxisID:'y1',order:2}
     ]
   },
   options: {
