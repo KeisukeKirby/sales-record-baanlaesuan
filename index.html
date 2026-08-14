@@ -50,6 +50,15 @@
   h1{margin:0;font-size:28px;font-weight:700;letter-spacing:0;}
   .period{font-family:var(--mono);color:var(--ink-dim);font-size:13px;line-height:1.7;text-align:right;}
   .period b{color:var(--ink);}
+  .lang-toggle{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px;}
+  .lang-btn{
+    font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.02em;
+    color:var(--ink-dim);background:transparent;border:none;border-radius:6px;
+    padding:6px 14px;cursor:pointer;transition:background .15s ease,color .15s ease;
+  }
+  .lang-btn:hover{color:var(--ink);}
+  .lang-btn.active{background:var(--accent);color:#16241C;}
+  .lang-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
   .kpi-row{
     display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px;
   }
@@ -144,81 +153,85 @@
   <header>
     <div>
       <div class="eyebrow">Baan Lae Suan midyear fair 2026 Performance Report</div>
-      <h1>VFF ブース 実績ダッシュボード</h1>
+      <h1 data-i18n="title">VFF ブース 実績ダッシュボード</h1>
+    </div>
+    <div class="lang-toggle" role="group" aria-label="Language / 言語切替">
+      <button type="button" class="lang-btn" data-lang="ja" aria-pressed="true">日本語</button>
+      <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">English</button>
     </div>
   </header>
   <div class="kpi-row">
     <div class="kpi">
-      <div class="kpi-label">総販売額</div>
+      <div class="kpi-label" data-i18n="kpiNetLabel">総販売額</div>
       <div class="kpi-value" id="kpiNet">-</div>
       <div class="kpi-sub">THB</div>
       <div class="kpi-yoy" id="yoyNet"></div>
     </div>
     <div class="kpi g">
-      <div class="kpi-label">総販売数量</div>
+      <div class="kpi-label" data-i18n="kpiQtyLabel">総販売数量</div>
       <div class="kpi-value" id="kpiQty">-</div>
-      <div class="kpi-sub">点</div>
+      <div class="kpi-sub" data-i18n="unitPt">点</div>
       <div class="kpi-yoy" id="yoyQty"></div>
     </div>
     <div class="kpi c">
-      <div class="kpi-label">客数（伝票数）</div>
+      <div class="kpi-label" data-i18n="kpiReceiptsLabel">客数（伝票数）</div>
       <div class="kpi-value" id="kpiReceipts">-</div>
-      <div class="kpi-sub">件</div>
+      <div class="kpi-sub" data-i18n="unitCase">件</div>
       <div class="kpi-yoy" id="yoyReceipts"></div>
     </div>
     <div class="kpi">
-      <div class="kpi-label">客単価</div>
+      <div class="kpi-label" data-i18n="kpiAvgLabel">客単価</div>
       <div class="kpi-value" id="kpiAvg">-</div>
-      <div class="kpi-sub">THB / 件</div>
+      <div class="kpi-sub" data-i18n="unitThbPerCase">THB / 件</div>
       <div class="kpi-yoy" id="yoyAvg"></div>
     </div>
   </div>
   <section>
-    <div class="section-title"><span class="n">01</span> 日別 販売額・数量</div>
+    <div class="section-title"><span class="n">01</span><span data-i18n="sec01">日別 販売額・数量</span></div>
     <div class="panel">
       <div class="chart-box tall"><canvas id="dailyChart"></canvas></div>
     </div>
   </section>
   <section>
-    <div class="section-title"><span class="n">02</span> モデル別ランキング（サイズ・カラー合算）</div>
+    <div class="section-title"><span class="n">02</span><span data-i18n="sec02">モデル別ランキング（サイズ・カラー合算）</span></div>
     <div class="grid2">
       <div class="panel">
-        <h3>売上トップ10</h3>
+        <h3 data-i18n="top10Title">売上トップ10</h3>
         <table class="top">
-          <tr><th>モデル</th><th style="text-align:right">数量</th><th style="text-align:right">金額(THB)</th></tr>
+          <tr><th data-i18n="thModel">モデル</th><th style="text-align:right" data-i18n="thQty">数量</th><th style="text-align:right" data-i18n="thAmountTHB">金額(THB)</th></tr>
           <tbody id="top10body"></tbody>
         </table>
       </div>
       <div class="panel">
-        <h3>売上ワースト10</h3>
+        <h3 data-i18n="bottom10Title">売上ワースト10</h3>
         <table class="bottom">
-          <tr><th>モデル</th><th style="text-align:right">数量</th><th style="text-align:right">金額(THB)</th></tr>
+          <tr><th data-i18n="thModel">モデル</th><th style="text-align:right" data-i18n="thQty">数量</th><th style="text-align:right" data-i18n="thAmountTHB">金額(THB)</th></tr>
           <tbody id="bottom10body"></tbody>
         </table>
       </div>
     </div>
   </section>
   <section>
-    <div class="section-title"><span class="n">03</span> ブランド別 売上構成</div>
+    <div class="section-title"><span class="n">03</span><span data-i18n="sec03">ブランド別 売上構成</span></div>
     <div class="grid2">
       <div class="panel">
-        <h3>ブランド別 金額シェア</h3>
+        <h3 data-i18n="brandShareTitle">ブランド別 金額シェア</h3>
         <div class="chart-box"><canvas id="brandChart"></canvas></div>
       </div>
       <div class="panel">
-        <h3>ブランド別 内訳</h3>
+        <h3 data-i18n="brandBreakdownTitle">ブランド別 内訳</h3>
         <table>
-          <tr><th>ブランド</th><th style="text-align:right">数量</th><th style="text-align:right">金額</th><th style="text-align:right">比率</th></tr>
+          <tr><th data-i18n="thBrand">ブランド</th><th style="text-align:right" data-i18n="thQty">数量</th><th style="text-align:right" data-i18n="thAmountPlain">金額</th><th style="text-align:right" data-i18n="thShare">比率</th></tr>
           <tbody id="brandBody"></tbody>
         </table>
       </div>
     </div>
   </section>
   <section>
-    <div class="section-title"><span class="n">04</span> ブランド別 売上詳細</div>
+    <div class="section-title"><span class="n">04</span><span data-i18n="sec04">ブランド別 売上詳細</span></div>
     <div class="panel">
       <div class="detail-head">
-        <label for="brandSelect">ブランドを選択</label>
+        <label for="brandSelect" data-i18n="selectBrandLabel">ブランドを選択</label>
         <select id="brandSelect"></select>
         <span class="detail-summary" id="brandSummary"></span>
       </div>
@@ -226,10 +239,10 @@
         <thead>
           <tr>
             <th style="width:44px">#</th>
-            <th>モデル</th>
-            <th style="text-align:right">数量</th>
-            <th style="text-align:right">金額(THB)</th>
-            <th style="text-align:right">ブランド内比率</th>
+            <th data-i18n="thModel">モデル</th>
+            <th style="text-align:right" data-i18n="thQty">数量</th>
+            <th style="text-align:right" data-i18n="thAmountTHB">金額(THB)</th>
+            <th style="text-align:right" data-i18n="thBrandShare">ブランド内比率</th>
           </tr>
         </thead>
         <tbody id="brandDetailBody"></tbody>
@@ -237,20 +250,14 @@
     </div>
   </section>
   <section>
-    <div class="section-title"><span class="n">05</span> 所感</div>
+    <div class="section-title"><span class="n">05</span><span data-i18n="sec05">所感</span></div>
     <div class="panel">
-      <ul class="insight-list">
-        <li>ブース来場者・購入者ともに、30代後半以上が大半を占めた。商品への関心は性別で明確に分かれ、女性はV-SOUL、男性はV-RUNへの反応が最も強かった。VFFの使用経験がある方は、ランニングやトレーニングを習慣にしている男性に多く見られた。</li>
-        <li>当社ブースは、会期中最も人の出入りが多かったアウトドア用品エリアからやや離れており、会場全体の人の流れを十分に取り込めていなかった。</li>
-        <li>２週目に比べ１週目のブース来場者は広告の影響もあってか、試着・購入目的の来場者が多かった印象。</li>
-        <li>売上合計は前年を上回った一方、来場者の出入りは時間帯による波が大きかった。最終日は夕方の時点で、すでに人の流れがまばらになっていた。</li>
-        <li>Coolcore製品は特に40-50代男性からの関心が高かった。</li>
-      </ul>
+      <ul class="insight-list" id="insightList"></ul>
     </div>
   </section>
   <footer>
     <span>Source: Sales_VFF_BLS_31_07-09_08_2026.xlsx</span>
-    <div class="foot-meta">会期 <b>2026/07/31 – 08/09</b> @BITEC　｜　集計対象：VFF / BFJ / Coolcore / Marugo / Oleno / AQOZ / Others</div>
+    <div class="foot-meta" data-i18n-html="footMeta">会期 <b>2026/07/31 – 08/09</b> @BITEC　｜　集計対象：VFF / BFJ / Coolcore / Marugo / Oleno / AQOZ / Others</div>
   </footer>
 </div>
 <script>
@@ -335,6 +342,114 @@ const DATA = {
   }
 };
 const fmt = n => n.toLocaleString('en-US');
+
+// --- i18n dictionary ---
+const T = {
+  ja: {
+    title: 'VFF ブース 実績ダッシュボード',
+    kpiNetLabel: '総販売額',
+    kpiQtyLabel: '総販売数量',
+    kpiReceiptsLabel: '客数（伝票数）',
+    kpiAvgLabel: '客単価',
+    unitPt: '点',
+    unitCase: '件',
+    unitThbPerCase: 'THB / 件',
+    yoyCap: '前年比',
+    sec01: '日別 販売額・数量',
+    sec02: 'モデル別ランキング（サイズ・カラー合算）',
+    sec03: 'ブランド別 売上構成',
+    sec04: 'ブランド別 売上詳細',
+    sec05: '所感',
+    top10Title: '売上トップ10',
+    bottom10Title: '売上ワースト10',
+    thModel: 'モデル',
+    thQty: '数量',
+    thAmountTHB: '金額(THB)',
+    brandShareTitle: 'ブランド別 金額シェア',
+    brandBreakdownTitle: 'ブランド別 内訳',
+    thBrand: 'ブランド',
+    thAmountPlain: '金額',
+    thShare: '比率',
+    selectBrandLabel: 'ブランドを選択',
+    thBrandShare: 'ブランド内比率',
+    brandSummary: (n,q,net) => `${n} モデル ・ ${fmt(q)} 点 ・ ${fmt(net)} THB`,
+    insights: [
+      'ブース来場者・購入者ともに、30代後半以上が大半を占めた。商品への関心は性別で明確に分かれ、女性はV-SOUL、男性はV-RUNへの反応が最も強かった。VFFの使用経験がある方は、ランニングやトレーニングを習慣にしている男性に多く見られた。',
+      '当社ブースは、会期中最も人の出入りが多かったアウトドア用品エリアからやや離れており、会場全体の人の流れを十分に取り込めていなかった。',
+      '２週目に比べ１週目のブース来場者は広告の影響もあってか、試着・購入目的の来場者が多かった印象。',
+      '売上合計は前年を上回った一方、来場者の出入りは時間帯による波が大きかった。最終日は夕方の時点で、すでに人の流れがまばらになっていた。',
+      'Coolcore製品は特に40-50代男性からの関心が高かった。'
+    ],
+    footMeta: '会期 <b>2026/07/31 – 08/09</b> @BITEC　｜　集計対象：VFF / BFJ / Coolcore / Marugo / Oleno / AQOZ / Others',
+    dsSalesCur: '販売額 2026 (THB)',
+    dsSalesPrev: '販売額 2025 (THB)',
+    dsQtyCur: '数量 2026 (点)',
+    dsQtyPrev: '数量 2025 (点)',
+    tooltipTitle: (cur,prev)=>`2026 ${cur}  ／  2025 ${prev}`,
+    tooltipFooter: (curV,prevV)=>`客単価 2026: ${curV} ／ 2025: ${prevV} THB`
+  },
+  en: {
+    title: 'VFF Booth Performance Dashboard',
+    kpiNetLabel: 'Total Sales Amount',
+    kpiQtyLabel: 'Total Units Sold',
+    kpiReceiptsLabel: 'Customers (Receipts)',
+    kpiAvgLabel: 'Avg. Spend / Receipt',
+    unitPt: 'Units',
+    unitCase: 'Receipts',
+    unitThbPerCase: 'THB / Receipt',
+    yoyCap: 'YoY',
+    sec01: 'Daily Sales Amount & Units',
+    sec02: 'Model Ranking (Size/Color Combined)',
+    sec03: 'Sales Composition by Brand',
+    sec04: 'Brand Sales Detail',
+    sec05: 'Observations',
+    top10Title: 'Top 10 by Sales',
+    bottom10Title: 'Bottom 10 by Sales',
+    thModel: 'Model',
+    thQty: 'Qty',
+    thAmountTHB: 'Amount (THB)',
+    brandShareTitle: 'Sales Share by Brand',
+    brandBreakdownTitle: 'Brand Breakdown',
+    thBrand: 'Brand',
+    thAmountPlain: 'Amount',
+    thShare: 'Share',
+    selectBrandLabel: 'Select Brand',
+    thBrandShare: 'Share within Brand',
+    brandSummary: (n,q,net) => `${n} models ・ ${fmt(q)} units ・ ${fmt(net)} THB`,
+    insights: [
+      'Both booth visitors and buyers were mostly in their late 30s or older. Interest split clearly by gender — women responded most to the V-SOUL, men to the V-RUN. Visitors with prior VFF experience were mostly men with a running or training habit.',
+      'Our booth sat somewhat away from the outdoor-gear area, which drew the heaviest foot traffic during the fair, so it did not fully capture the venue’s overall visitor flow.',
+      'Compared with week 2, week-1 visitors — likely influenced by advertising — more often came specifically to try on or buy.',
+      'Total sales exceeded last year, but visitor traffic swung heavily by time of day. On the final day, foot traffic had already thinned out by evening.',
+      'Coolcore products drew particularly strong interest from men in their 40s-50s.'
+    ],
+    footMeta: 'Event Period <b>2026/07/31 – 08/09</b> @BITEC&nbsp;&nbsp;|&nbsp;&nbsp;Scope: VFF / BFJ / Coolcore / Marugo / Oleno / AQOZ / Others',
+    dsSalesCur: 'Sales 2026 (THB)',
+    dsSalesPrev: 'Sales 2025 (THB)',
+    dsQtyCur: 'Units 2026',
+    dsQtyPrev: 'Units 2025',
+    tooltipTitle: (cur,prev)=>`2026 ${cur}  /  2025 ${prev}`,
+    tooltipFooter: (curV,prevV)=>`Avg/receipt 2026: ${curV} / 2025: ${prevV} THB`
+  }
+};
+let LANG = localStorage.getItem('vff_lang') === 'en' ? 'en' : 'ja';
+const t = key => T[LANG][key];
+
+function applyStaticI18n(){
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>{
+    el.innerHTML = t(el.dataset.i18nHtml);
+  });
+  document.querySelectorAll('.lang-btn').forEach(b=>{
+    const active = b.dataset.lang === LANG;
+    b.classList.toggle('active', active);
+    b.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
+}
+
 document.getElementById('kpiNet').textContent = fmt(DATA.total_net);
 document.getElementById('kpiQty').textContent = fmt(DATA.total_qty);
 document.getElementById('kpiReceipts').textContent = fmt(DATA.num_receipts);
@@ -347,7 +462,7 @@ function setYoY(id, cur, prev){
   const cls = pct > 0.05 ? 'up' : (pct < -0.05 ? 'down' : 'flat');
   const arrow = pct > 0.05 ? '▲' : (pct < -0.05 ? '▼' : '±');
   el.className = 'kpi-yoy ' + cls;
-  el.innerHTML = `<span class="yoy-cap">前年比</span>${arrow}${Math.abs(pct).toFixed(1)}%`;
+  el.innerHTML = `<span class="yoy-cap" data-i18n="yoyCap">${t('yoyCap')}</span>${arrow}${Math.abs(pct).toFixed(1)}%`;
   el.title = `2025: ${fmt(Math.round(prev))}`;
 }
 const LY = DATA.lastYear;
@@ -392,19 +507,16 @@ function renderBrandDetail(brand){
       <td class="num">${fmt(r.net)}</td>
       <td class="num">${totalNet ? (r.net/totalNet*100).toFixed(1) : '0.0'}%</td>
     </tr>`).join('');
-  document.getElementById('brandSummary').textContent =
-    `${rows.length} モデル ・ ${fmt(totalQty)} 点 ・ ${fmt(totalNet)} THB`;
+  document.getElementById('brandSummary').textContent = t('brandSummary')(rows.length, totalQty, totalNet);
 }
 brandSelect.addEventListener('change', e=>renderBrandDetail(e.target.value));
-renderBrandDetail(Object.keys(DATA.brandModels)[0]);
-if (typeof Chart === 'undefined') {
-  console.error('Chart.js failed to load from CDN');
-} else {
-Chart.defaults.color = '#AFC4B6';
-Chart.defaults.font.family = "'Noto Sans JP', -apple-system, 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif";
-Chart.defaults.font.size = 13;
-Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
-Chart.defaults.devicePixelRatio = Math.max(2, window.devicePixelRatio || 1);
+
+function renderInsights(){
+  document.getElementById('insightList').innerHTML =
+    t('insights').map(text=>`<li>${text}</li>`).join('');
+}
+
+// --- Charts (rebuilt on language change so labels/tooltips stay in sync) ---
 const dailyLabels = DATA.daily.map(d=>{
   const dt = new Date(d.date+'T00:00:00');
   return (dt.getMonth()+1)+'/'+dt.getDate();
@@ -412,53 +524,91 @@ const dailyLabels = DATA.daily.map(d=>{
 const lyDaily = DATA.lastYear.daily;
 const lyDates = lyDaily.map(d=>{ const dt=new Date(d.date+'T00:00:00'); return (dt.getMonth()+1)+'/'+dt.getDate(); });
 const avgPerReceipt = d => (d && d.receipts) ? Math.round(d.net / d.receipts) : 0;
-new Chart(document.getElementById('dailyChart'), {
-  data: {
-    labels: dailyLabels,
-    datasets: [
-      {type:'bar',label:'販売額 2026 (THB)',data: DATA.daily.map(d=>d.net),backgroundColor:'#3E8FDB',borderRadius:4,categoryPercentage:0.7,barPercentage:0.9,yAxisID:'y',order:4},
-      {type:'bar',label:'販売額 2025 (THB)',data: lyDaily.map(d=>d.net),backgroundColor:'#A9CFF2',borderRadius:4,categoryPercentage:0.7,barPercentage:0.9,yAxisID:'y',order:5},
-      {type:'line',label:'数量 2026 (点)',data: DATA.daily.map(d=>d.qty),borderColor:'#2E9C74',backgroundColor:'#2E9C74',tension:0.35,pointRadius:4,pointBackgroundColor:'#2E9C74',yAxisID:'y1',order:1},
-      {type:'line',label:'数量 2025 (点)',data: lyDaily.map(d=>d.qty),borderColor:'#96D9BB',backgroundColor:'#96D9BB',borderDash:[5,4],borderWidth:2,tension:0.35,pointRadius:3,pointBackgroundColor:'#96D9BB',yAxisID:'y1',order:2}
-    ]
-  },
-  options: {
-    responsive:true, maintainAspectRatio:false,
-    interaction:{mode:'index', intersect:false},
-    plugins:{
-      legend:{labels:{boxWidth:12, usePointStyle:true, padding:14}},
-      tooltip:{ callbacks:{
-        title: items => items.length ? `2026 ${dailyLabels[items[0].dataIndex]}  ／  2025 ${lyDates[items[0].dataIndex]}` : '',
-        label: ctx => `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}`,
-        footer: items => {
-          if (!items.length) return '';
-          const i = items[0].dataIndex;
-          return `客単価 2026: ${fmt(avgPerReceipt(DATA.daily[i]))} ／ 2025: ${fmt(avgPerReceipt(lyDaily[i]))} THB`;
-        }
-      } }
-    },
-    scales:{
-      y:{ position:'left', grid:{color:'rgba(255,255,255,0.06)'}, ticks:{ callback:v=>fmt(v) } },
-      y1:{ position:'right', grid:{display:false}, ticks:{ stepSize:20 } }
-    }
-  }
-});
 const brandColors = ['#E8A33D','#5FA88A','#C97B4A','#7FA0C4','#B189C7','#D9C15A','#8E9C8F'];
-new Chart(document.getElementById('brandChart'), {
-  type:'doughnut',
-  data:{
-    labels: DATA.brand.map(b=>b.brand),
-    datasets:[{data: DATA.brand.map(b=>b.net),backgroundColor: brandColors,borderColor:'#16241C',borderWidth:2}]
-  },
-  options:{
-    responsive:true, maintainAspectRatio:false,
-    plugins:{
-      legend:{ position:'right', labels:{ boxWidth:10, usePointStyle:true, font:{size:12} } },
-      tooltip:{ callbacks:{ label: ctx => `${ctx.label}: ${fmt(ctx.raw)} THB` } }
+let dailyChart = null;
+let brandChart = null;
+
+function buildDailyChart(){
+  if (dailyChart) dailyChart.destroy();
+  dailyChart = new Chart(document.getElementById('dailyChart'), {
+    data: {
+      labels: dailyLabels,
+      datasets: [
+        {type:'bar',label:t('dsSalesCur'),data: DATA.daily.map(d=>d.net),backgroundColor:'#3E8FDB',borderRadius:4,categoryPercentage:0.7,barPercentage:0.9,yAxisID:'y',order:4},
+        {type:'bar',label:t('dsSalesPrev'),data: lyDaily.map(d=>d.net),backgroundColor:'#A9CFF2',borderRadius:4,categoryPercentage:0.7,barPercentage:0.9,yAxisID:'y',order:5},
+        {type:'line',label:t('dsQtyCur'),data: DATA.daily.map(d=>d.qty),borderColor:'#2E9C74',backgroundColor:'#2E9C74',tension:0.35,pointRadius:4,pointBackgroundColor:'#2E9C74',yAxisID:'y1',order:1},
+        {type:'line',label:t('dsQtyPrev'),data: lyDaily.map(d=>d.qty),borderColor:'#96D9BB',backgroundColor:'#96D9BB',borderDash:[5,4],borderWidth:2,tension:0.35,pointRadius:3,pointBackgroundColor:'#96D9BB',yAxisID:'y1',order:2}
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index', intersect:false},
+      plugins:{
+        legend:{labels:{boxWidth:12, usePointStyle:true, padding:14}},
+        tooltip:{ callbacks:{
+          title: items => items.length ? t('tooltipTitle')(dailyLabels[items[0].dataIndex], lyDates[items[0].dataIndex]) : '',
+          label: ctx => `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}`,
+          footer: items => {
+            if (!items.length) return '';
+            const i = items[0].dataIndex;
+            return t('tooltipFooter')(fmt(avgPerReceipt(DATA.daily[i])), fmt(avgPerReceipt(lyDaily[i])));
+          }
+        } }
+      },
+      scales:{
+        y:{ position:'left', grid:{color:'rgba(255,255,255,0.06)'}, ticks:{ callback:v=>fmt(v) } },
+        y1:{ position:'right', grid:{display:false}, ticks:{ stepSize:20 } }
+      }
     }
-  }
-});
+  });
 }
+
+function buildBrandChart(){
+  if (brandChart) brandChart.destroy();
+  brandChart = new Chart(document.getElementById('brandChart'), {
+    type:'doughnut',
+    data:{
+      labels: DATA.brand.map(b=>b.brand),
+      datasets:[{data: DATA.brand.map(b=>b.net),backgroundColor: brandColors,borderColor:'#16241C',borderWidth:2}]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{ position:'right', labels:{ boxWidth:10, usePointStyle:true, font:{size:12} } },
+        tooltip:{ callbacks:{ label: ctx => `${ctx.label}: ${fmt(ctx.raw)} THB` } }
+      }
+    }
+  });
+}
+
+function setLang(lang){
+  LANG = lang;
+  localStorage.setItem('vff_lang', lang);
+  applyStaticI18n();
+  renderInsights();
+  renderBrandDetail(brandSelect.value);
+  if (typeof Chart !== 'undefined'){
+    buildDailyChart();
+    buildBrandChart();
+  }
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=> setLang(btn.dataset.lang));
+});
+
+if (typeof Chart === 'undefined') {
+  console.error('Chart.js failed to load from CDN');
+} else {
+  Chart.defaults.color = '#AFC4B6';
+  Chart.defaults.font.family = "'Noto Sans JP', -apple-system, 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif";
+  Chart.defaults.font.size = 13;
+  Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+  Chart.defaults.devicePixelRatio = Math.max(2, window.devicePixelRatio || 1);
+}
+
+renderBrandDetail(Object.keys(DATA.brandModels)[0]);
+setLang(LANG);
 </script>
 </body>
 </html>
